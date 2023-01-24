@@ -1,75 +1,88 @@
 import 'package:finalproject/app/core/const.dart';
+import 'package:finalproject/app/navigation%20items/home/provider/connectivity_prov.dart';
 import 'package:finalproject/app/navigation%20items/home/widgets/carousel.dart';
 import 'package:finalproject/app/navigation%20items/home/widgets/category.dart';
 import 'package:finalproject/app/navigation%20items/home/widgets/gridview1.dart';
-import 'package:finalproject/app/navigation%20items/home/widgets/gridview2.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    Provider.of<ProvConnectivity>(context, listen: false)
+        .getConnectivity(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: kWhitecolor,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Icon(
-                    Icons.sort,
-                    size: 35,
-                    color: kBlackcolor,
+      child: Consumer<ProvConnectivity>(
+        builder: (context, value, child) {
+          value.getConnectivity(context);
+          return Scaffold(
+            backgroundColor: kWhitecolor,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              actions: const [
+                Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Icon(
+                    Icons.search,
+                    size: 30,
                   ),
-                  SizedBox(
-                    width: 300,
-                    height: 50,
-                    child: TextFormField(
-                      // controller: value.search,
-                      decoration: InputDecoration(
-                        hintText: " Search",
-                        suffixIcon: IconButton(
-                            onPressed: () {}, icon: const Icon(Icons.search)),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black, width: 1.5),
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                        ),
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border: const OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(40))),
-                      ),
-                    ),
-                  ),
-                  const Icon(
-                    Icons.favorite_border_outlined,
-                    size: 32,
-                    color: kGrey,
-                  ),
-                ],
+                )
+              ],
+              backgroundColor: Colors.white,
+              elevation: 0,
+              title: SizedBox(
+                  height: 90,
+                  width: 90,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Image.asset("assets/fobehome.png"),
+                  )),
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    //------------------------------------------------*Carousel
+                    WidgetCarousel(),
+                    iHeight18,
+                    Text('Category',
+                        style: TextStyle(
+                            fontSize: 15,
+                            wordSpacing: 1,
+                            fontWeight: FontWeight.w900)),
+                    iHeight8,
+                    //------------------------------------------------*Category
+                    WidgetCategoryListview(),
+                    SizedBox(height: 15),
+                    Text('Newly Launched',
+                        style: TextStyle(
+                            fontSize: 15,
+                            wordSpacing: 1,
+                            fontWeight: FontWeight.w900)),
+
+                    SizedBox(height: 10),
+                    //------------------------------------------------*Products
+                    WidgetGridView(),
+                  ],
+                ),
               ),
-              iHeight18,
-              const WidgetCarousel(),
-              iHeight18,
-              const Text('   Category', style: textstyle1),
-              iHeight8,
-              const WidgetCategoryListview(),
-              const SizedBox(height: 20),
-              const Text('   Newly Launched', style: textstyle1),
-              const WidgetGridView(),
-              iHeight10,
-              const Text('   New Item', style: textstyle1),
-              iHeight8,
-              WidgetGridView2(),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

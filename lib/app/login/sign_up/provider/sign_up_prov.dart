@@ -1,11 +1,9 @@
+import 'package:finalproject/app/login/otp/view/otp_screen.dart';
+import 'package:finalproject/app/login/sign_up/model/sign_up_model.dart';
+import 'package:finalproject/app/services/otp_services.dart';
+import 'package:finalproject/app/services/sign_up_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:provider/provider.dart';
-import '../../../navigation items/navigation_bar/view/navigationbar.dart';
-import '../../../services/otp_services.dart';
-import '../../../services/sign_up_services.dart';
-import '../../otp/view/otp_screen.dart';
-import '../model/sign_up_model.dart';
 
 class SignUp extends ChangeNotifier {
 //---------------------------*Username Validation

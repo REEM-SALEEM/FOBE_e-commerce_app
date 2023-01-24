@@ -10,27 +10,27 @@ class SplashProvider extends ChangeNotifier {
   String? onboardValue;
   String? signinCheck;
 
-  void splashTimer(context) {
+  void splashTimer(BuildContext context) {
     Timer(
       const Duration(seconds: 3),
       () async {
-        onboardValue = await storage.read(key: 'onboard');
         signinCheck = await storage.read(key: 'token');
         log(signinCheck.toString());
         if (signinCheck != null) {
+          log('splash');
           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
             builder: (context) {
               return const BottomNavigationScreen();
             },
           ), (route) => false);
         } else {
-          if (onboardValue != null) {
+          if (signinCheck == null) {
             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
               builder: (context) {
                 return const SignInScreen();
               },
             ), (route) => false);
-          } else {}
+          }
         }
       },
     );

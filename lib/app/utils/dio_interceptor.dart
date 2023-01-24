@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:finalproject/app/core/api/api_endpoints.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -11,24 +13,27 @@ class ApiInterceptor {
   Future<Dio> getApiUser(context) async {
     dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) async { //--------------------onrequest
+        onRequest: (options, handler) async {
+          //--------------------onrequest
           final token = await storage.read(key: 'token');
-          dio.interceptors.clear(); 
+          dio.interceptors.clear();
           options.headers.addAll({"Authorization": "Bearer $token"});
           return handler.next(options);
         },
-        onResponse: (response, handler) {//--------------------onresponse
+        onResponse: (response, handler) {
+          //--------------------onresponse
           return handler.next(response);
         },
-        onError: (DioError e, handler) async {//--------------------onerror
+        onError: (DioError e, handler) async {
+          //--------------------onerror
           if (e.response != null) {
             if (e.response?.statusCode == 403 &&
                 e.response?.data['message'] == 'Forbidden') {
-              print('token expired');
+              log('token expired');
               RequestOptions requestOptions = e.requestOptions;
               try {
                 final refreshToken = await storage.read(key: 'refreshToken');
-                print(refreshToken.toString());
+                log(refreshToken.toString());
                 final opts = Options(method: requestOptions.method);
                 dio.options.headers["refresh"] = "Bearer $refreshToken";
                 final Response response = await dio.get(
@@ -36,7 +41,7 @@ class ApiInterceptor {
                   options: opts,
                 );
                 if (response.statusCode! == 200) {
-                  print(response.data.toString());
+                  log(response.data.toString());
                   final token = response.data['accessToken'];
                   final refreshToken = response.data['refreshToken'];
                   await storage.delete(key: 'token');

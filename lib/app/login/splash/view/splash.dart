@@ -1,5 +1,6 @@
-import 'package:finalproject/app/login/sign_in/view/sign_in.dart';
+import 'package:finalproject/app/login/splash/provider/splash_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ScreenSplash extends StatefulWidget {
   const ScreenSplash({super.key});
@@ -10,20 +11,16 @@ class ScreenSplash extends StatefulWidget {
 
 class _ScreenSplashState extends State<ScreenSplash> {
   @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => const SignInScreen(),
-      ));
-    });
-    super.initState();
+  void didChangeDependencies() {
+    Provider.of<SplashProvider>(context, listen: false).splashTimer(context);
+    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
         body: Center(
-      child: Text('shope',
+      child: Text('FOBE',
           style: TextStyle(
               fontFamily: 'Comfortaa', color: Colors.red, fontSize: 28)),
     ));

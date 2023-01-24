@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:finalproject/app/login/sign_in/model/sign_in_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -20,7 +22,8 @@ class SignIn extends ChangeNotifier {
       notifyListeners();
     } else {
       icon = const Icon(
-        Icons.visibility, color: Colors.black,
+        Icons.visibility,
+        color: Colors.black,
       );
       isobscure = false;
       notifyListeners();
@@ -74,8 +77,15 @@ class SignIn extends ChangeNotifier {
       signinServices.signinUser(signinModel, context).then(
         (value) {
           if (value != null) {
+            log("write =${value.accessToken}");
             storage.write(key: 'token', value: value.accessToken);
             storage.write(key: 'refreshToken', value: value.refreshToken);
+            notifyListeners();
+            storage.read(key: 'token').then((value) {
+              if (value != null) {
+                log('read =$value');
+              }
+            });
 
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const BottomNavigationScreen(),

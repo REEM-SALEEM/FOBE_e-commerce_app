@@ -16,16 +16,19 @@ class CategoryShimmer extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {},
-                    child: const ShimmerWidget.circle(height: 60, width: 60),
+                    child: const Padding(
+                      padding: EdgeInsets.fromLTRB(10, 8, 8, 8),
+                      child: ShimmerWidget.circle(height: 70, width: 70),
+                    ),
                   ),
-                  const ShimmerWidget.rectangle(height: 20, width: 60)
+                  const ShimmerWidget.rectangle(height: 10, width: 60)
                 ],
               ),
             ],
           );
         },
         scrollDirection: Axis.horizontal,
-        itemCount: 5,
+        itemCount: 7,
         separatorBuilder: (BuildContext context, int index) {
           return Container();
         },

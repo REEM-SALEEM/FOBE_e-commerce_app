@@ -1,8 +1,9 @@
-
+import 'package:finalproject/app/navigation%20items/profile/address/view/address_add.dart';
+import 'package:finalproject/app/navigation%20items/profile/logout/logout_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/profile_prov.dart';
+import '../address/provider/profile_prov.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -11,42 +12,67 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          const SizedBox(height: 100),
-          Consumer<ProfileProvider>(
-            builder: (BuildContext context, value, Widget? child) {
-              return Expanded(
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: value.iconsprof[index],
-                        title: Text(
-                          value.title[index],
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                        trailing: value.buttonprof[index],
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemCount: value.title.length),
-              );
-            },
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.black,
-              disabledForegroundColor: Colors.grey,
-              elevation: 20,
-              minimumSize: const Size(350, 50),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(height: 60),
+            const Text(
+              'Profile',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            onPressed: () {
-              Provider.of<ProfileProvider>(context, listen: false).logOut(context);
-            },
-            child: const Text('Log Out'),
-          ),
-        ],
+            const ListTile(
+              leading: Icon(Icons.person),
+              title: Text("Gender", style: TextStyle(color: Colors.black)),
+            ),
+            const Divider(),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const AddressViewnAdd(),
+                ));
+              },
+              child: const ListTile(
+                leading: Icon(Icons.location_city),
+                title: Text("Address", style: TextStyle(color: Colors.black)),
+              ),
+            ),
+            const Divider(),
+            const ListTile(
+              leading: Icon(Icons.email),
+              title: Text("Email", style: TextStyle(color: Colors.black)),
+            ),
+            const Divider(),
+            const ListTile(
+              leading: Icon(Icons.phone_android_outlined),
+              title:
+                  Text("Phone number", style: TextStyle(color: Colors.black)),
+            ),
+            const Divider(),
+            const ListTile(
+              leading: Icon(Icons.lock),
+              title: Text("change password",
+                  style: TextStyle(color: Colors.black)),
+            ),
+            const Divider(),
+            InkWell(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const LogoutAlertWidget();
+                  },
+                );
+              },
+              child: const ListTile(
+                leading: Icon(Icons.logout_outlined),
+                title: Text("Log out", style: TextStyle(color: Colors.black)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -3,9 +3,14 @@ import 'package:finalproject/app/navigation%20items/navigation_bar/provider/inde
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class BottomNavigationScreen extends StatelessWidget {
+class BottomNavigationScreen extends StatefulWidget {
   const BottomNavigationScreen({super.key});
 
+  @override
+  State<BottomNavigationScreen> createState() => _BottomNavigationScreenState();
+}
+
+class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<NavigationIndex>(
@@ -25,7 +30,7 @@ class BottomNavigationScreen extends StatelessWidget {
               child: BottomNavigationBar(
                 items: const [
                   BottomNavigationBarItem(
-                    backgroundColor: kBlackcolor,
+                      backgroundColor: kBlackcolor,
                       icon: Icon(
                         Icons.home,
                         size: 25,
@@ -52,11 +57,12 @@ class BottomNavigationScreen extends StatelessWidget {
                 ],
                 unselectedItemColor: const Color.fromARGB(255, 106, 104, 104),
                 selectedItemColor: const Color.fromARGB(255, 49, 47, 47),
-                showUnselectedLabels: true,
+                // showUnselectedLabels: true,
                 type: BottomNavigationBarType.fixed,
                 currentIndex: data.currentIndex,
                 onTap: (index) {
-                  data.bottomNav(index);
+                  Provider.of<NavigationIndex>(context, listen: false)
+                      .bottomNav(index);
                 },
               ),
             ),

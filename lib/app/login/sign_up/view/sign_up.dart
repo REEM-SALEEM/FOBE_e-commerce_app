@@ -1,4 +1,3 @@
-
 import 'package:finalproject/app/core/const.dart';
 import 'package:finalproject/app/login/sign_in/provider/sign_in_prov.dart';
 import 'package:flutter/material.dart';
@@ -86,25 +85,26 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(18, 10, 18, 10),
-                    child: Consumer<SignUp>(
+                    child: Consumer<SignIn>(
                       builder: (BuildContext context, value, Widget? child) {
                         return TextFormField(
                           controller: value.password,
                           obscureText: value.isobscure,
-                          decoration: const InputDecoration(
-                            // suffixIcon: IconButton(
-                            //     onPressed: () {
-                            //       value.visibility();
-                            //     },
-                            //     icon: value.icon),
-                            hintText: "  Password",
-                            focusedBorder: OutlineInputBorder(
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  value.visibility();
+                                },
+                                icon: value.icon),
+                            hintText: "   password",
+                            focusedBorder: const OutlineInputBorder(
                               borderSide:
                                   BorderSide(color: kBlackcolor, width: 1.5),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
                             ),
-                            hintStyle: TextStyle(color: Colors.grey),
+                            hintStyle:
+                                TextStyle(color: Colors.grey, wordSpacing: 8),
                             border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(40))),
@@ -164,6 +164,9 @@ class SignUpScreen extends StatelessWidget {
                     child: const Text('Sign up'),
                   ),
                   iHeight17,
+                  const SizedBox(
+                    height: 20,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

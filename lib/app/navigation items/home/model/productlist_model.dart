@@ -8,6 +8,7 @@ class ProductModel {
   List<String> image;
   String category;
   String rating;
+  String description;
 
   ProductModel(
       {required this.id,
@@ -18,6 +19,7 @@ class ProductModel {
       required this.size,
       required this.image,
       required this.category,
+      required this.description,
       required this.rating});
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class ProductModel {
       image: List<String>.from(json["image"].map((e) => e)),
       category: json['category'],
       rating: json['rating'],
+      description: json['description'],
     );
   }
 }
