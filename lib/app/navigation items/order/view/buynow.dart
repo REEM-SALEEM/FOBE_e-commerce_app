@@ -3,14 +3,44 @@ import 'dart:developer';
 import 'package:finalproject/app/core/api/api_baseurl.dart';
 import 'package:finalproject/app/navigation%20items/cart/provider/cart_prov.dart';
 import 'package:finalproject/app/navigation%20items/home/provider/home_prov.dart';
+import 'package:finalproject/app/navigation%20items/order/provider/payment_prov.dart';
 import 'package:finalproject/app/navigation%20items/profile/address/provider/address_prov.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-class OrderScreen extends StatelessWidget {
+class OrderScreen extends StatefulWidget {
   const OrderScreen({super.key});
   static const routeName = "/orders_page";
+
+  @override
+  State<OrderScreen> createState() => _OrderScreenState();
+}
+
+class _OrderScreenState extends State<OrderScreen> {
+  PaymentProvider paymentProvider = PaymentProvider();
+
+  @override
+  void initState() {
+    final paymentProvider =
+        Provider.of<PaymentProvider>(context, listen: false);
+    final razorpay = paymentProvider.razorpay;
+    log('looo');
+    razorpay.on(
+        Razorpay.EVENT_PAYMENT_SUCCESS, paymentProvider.handlerPaymentSuccess);
+    razorpay.on(
+        Razorpay.EVENT_PAYMENT_ERROR, paymentProvider.handlerErrorFailure);
+    razorpay.on(
+        Razorpay.EVENT_EXTERNAL_WALLET, paymentProvider.handlerExternalWallet);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    paymentProvider.razorpay.clear();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,6 +227,15 @@ class OrderScreen extends StatelessWidget {
                 },
                 itemCount: 1,
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    paymentProvider.openCheckout(
+                        int.parse(
+                          ((provider.discountPrice)).toString(),
+                        ),
+                        context);
+                  },
+                  child: const Text('Continue'))
             ]),
           );
         },

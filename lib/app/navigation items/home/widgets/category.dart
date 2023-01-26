@@ -43,8 +43,8 @@ class WidgetCategoryListview extends StatelessWidget {
                                   child: CircleAvatar(
                                     radius: 40,
                                     backgroundImage: NetworkImage(
-                                        "http://172.16.8.138:5000/category/${value.categoryList[index].image}"),
-                                    // "http://192.168.1.11:5000/category/${value.categoryList[index].image}"),
+                                        "http://172.16.10.216:5000/category/${value.categoryList[index].image}"),
+                                    // "http://192.168.1.5:5000/category/${value.categoryList[index].image}"),
                                   ),
                                 ),
                                 Row(

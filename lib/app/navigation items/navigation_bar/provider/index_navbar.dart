@@ -10,7 +10,7 @@ class NavigationIndex extends ChangeNotifier {
      const HomeScreen(),
     const CartScreen(),
     const WishlistScreen(),
-    const ProfileScreen()
+     ProfileScreen()
   ];
 
   void bottomNav(int value) {

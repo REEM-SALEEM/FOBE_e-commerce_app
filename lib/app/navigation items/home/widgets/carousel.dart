@@ -26,8 +26,8 @@ class WidgetCarousel extends StatelessWidget {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                           image: NetworkImage(
-                              'http://172.16.8.138:5000/carousals/${value.carousalList[index].image}'),
-                              //  'http://192.168.1.11:5000/carousals/${value.carousalList[index].image}'),
+                              'http://172.16.10.216:5000/carousals/${value.carousalList[index].image}'),
+                              //  'http://192.168.1.5:5000/carousals/${value.carousalList[index].image}'),
                           fit: BoxFit.cover,
                         ),
                         color: Colors.black,

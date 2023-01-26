@@ -4,7 +4,7 @@ import 'package:favorite_button/favorite_button.dart';
 import 'package:finalproject/app/core/const.dart';
 import 'package:finalproject/app/navigation%20items/cart/provider/cart_prov.dart';
 import 'package:finalproject/app/navigation%20items/home/provider/home_prov.dart';
-import 'package:finalproject/app/navigation%20items/product/buy%20now/buynow.dart';
+import 'package:finalproject/app/navigation%20items/order/view/buynow.dart';
 import 'package:finalproject/app/navigation%20items/product/provider/product_prov.dart';
 import 'package:finalproject/app/navigation%20items/product/shimmer/product_view_shimmer.dart';
 import 'package:finalproject/app/navigation%20items/product/widgets/product_detail.dart';
@@ -51,8 +51,8 @@ class ProvDetails extends StatelessWidget {
                                     height: 150,
                                     fit: BoxFit.cover,
                                     image: NetworkImage(
-                                      'http://172.16.8.138:5000/products/${provider.image[index]}',
-                                      // 'http://192.168.1.11:5000/products/${provider.image[index]}',
+                                      // 'http://172.16.8.138:5000/products/${provider.image[index]}',
+                                      'http://192.168.1.5:5000/products/${provider.image[index]}',
                                     ),
                                   ),
                                 );

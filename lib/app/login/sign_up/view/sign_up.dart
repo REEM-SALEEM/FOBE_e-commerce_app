@@ -2,6 +2,7 @@ import 'package:finalproject/app/core/const.dart';
 import 'package:finalproject/app/login/sign_in/provider/sign_in_prov.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../provider/sign_up_prov.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -85,17 +86,17 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(18, 10, 18, 10),
-                    child: Consumer<SignIn>(
+                    child: Consumer<SignUp>(
                       builder: (BuildContext context, value, Widget? child) {
                         return TextFormField(
                           controller: value.password,
                           obscureText: value.isobscure,
                           decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                                onPressed: () {
-                                  value.visibility();
-                                },
-                                icon: value.icon),
+                            // suffixIcon: IconButton(
+                            //     onPressed: () {
+                            //       value.visibility();
+                            //     },
+                            //     icon: value.icon),
                             hintText: "   password",
                             focusedBorder: const OutlineInputBorder(
                               borderSide:
@@ -103,21 +104,21 @@ class SignUpScreen extends StatelessWidget {
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
                             ),
-                            hintStyle:
-                                TextStyle(color: Colors.grey, wordSpacing: 8),
-                            border: OutlineInputBorder(
+                            hintStyle: const TextStyle(
+                                color: Colors.grey, wordSpacing: 8),
+                            border: const OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(40))),
                           ),
                           validator: (valuee) =>
-                              value.passwordValidation(valuee),
+                              value.passwordValidationn(valuee),
                         );
                       },
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(18, 10, 18, 25),
-                    child: Consumer<SignIn>(
+                    child: Consumer<SignUp>(
                       builder: (BuildContext context, value1, Widget? child) {
                         return TextFormField(
                           controller: value.confirmpassword,
@@ -141,7 +142,7 @@ class SignUpScreen extends StatelessWidget {
                                     BorderRadius.all(Radius.circular(40))),
                           ),
                           validator: (valuee) =>
-                              value.passwordValidation(valuee!),
+                              value.passwordValidationn(valuee!),
                         );
                       },
                     ),
@@ -158,6 +159,7 @@ class SignUpScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30)),
                     ),
                     onPressed: () {
+                      value.setNotesData();
                       Provider.of<SignUp>(context, listen: false)
                           .signupUser(context);
                     },
@@ -177,7 +179,7 @@ class SignUpScreen extends StatelessWidget {
                                 .clearTextfield();
                             Navigator.of(context).pop();
                           },
-                          child: const Text('Sign up',
+                          child: const Text('Sign In',
                               style:
                                   TextStyle(color: kBlackcolor, fontSize: 15)))
                     ],

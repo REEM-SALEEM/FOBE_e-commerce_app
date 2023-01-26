@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../login/sign_in/view/sign_in.dart';
 
 class ProfileProvider extends ChangeNotifier {
+  String? savedName;
+  String? savedEmail;
+  String? savedPhone;
+  //*get the saved name
+  Future<void> getSavedData(BuildContext context) async {
+    final sharedprefs = await SharedPreferences.getInstance();
+    //getter method - get the saved name by key
+    savedName = sharedprefs.getString('saved_name');
+    notifyListeners();
+    savedEmail = sharedprefs.getString('saved_email');
+    notifyListeners();
+     savedPhone = sharedprefs.getString('saved_phone');
+    notifyListeners();
+  }
+
 //---------------------------*Icon of Address Form
   List formIcon = <Icon>[
     const Icon(Icons.arrow_forward_ios),

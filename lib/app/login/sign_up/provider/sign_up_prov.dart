@@ -1,11 +1,28 @@
+import 'dart:developer';
+
 import 'package:finalproject/app/login/otp/view/otp_screen.dart';
 import 'package:finalproject/app/login/sign_up/model/sign_up_model.dart';
 import 'package:finalproject/app/services/otp_services.dart';
 import 'package:finalproject/app/services/sign_up_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends ChangeNotifier {
+  //-------------------------*Sharedprefs
+  //save name
+  Future<void> setNotesData() async {
+    final sharedprefs = await SharedPreferences
+        .getInstance(); //initialize object of shared preference
+    await sharedprefs.setString('saved_name', fullname.text);
+    notifyListeners();
+    log(".......................................${fullname.text}");
+    await sharedprefs.setString('saved_email', email.text);
+    notifyListeners();
+    await sharedprefs.setString('saved_phone', phone.text);
+    notifyListeners();
+  }
+
 //---------------------------*Username Validation
   final TextEditingController fullname = TextEditingController();
 
@@ -52,9 +69,9 @@ class SignUp extends ChangeNotifier {
 
 //---------------------------*Password Validation
   final TextEditingController password = TextEditingController();
-    bool isobscure = true;
+  bool isobscure = true;
 
-  passwordValidation(String? value) {
+  passwordValidationn(String? value) {
     if (value == null || value.isEmpty) {
       notifyListeners();
       return 'This is required';
@@ -68,7 +85,7 @@ class SignUp extends ChangeNotifier {
 //---------------------------*Confirm Password Validation
   final TextEditingController confirmpassword = TextEditingController();
 
-  confirmpasswordValidation(String? value) {
+  confirmpasswordValidationn(String? value) {
     if (value == null || value.isEmpty) {
       notifyListeners();
       return 'This is required';
@@ -93,6 +110,7 @@ class SignUp extends ChangeNotifier {
       formkey.currentState!.save();
       isLoading = true;
       notifyListeners();
+
       final model = SignUpModel(
         fullName: fullname.text,
         email: email.text,

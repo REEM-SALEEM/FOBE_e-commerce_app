@@ -6,7 +6,9 @@ import 'package:finalproject/app/login/splash/provider/splash_provider.dart';
 import 'package:finalproject/app/login/splash/view/splash.dart';
 import 'package:finalproject/app/navigation%20items/cart/provider/cart_prov.dart';
 import 'package:finalproject/app/navigation%20items/home/provider/connectivity_prov.dart';
-import 'package:finalproject/app/navigation%20items/product/buy%20now/buynow.dart';
+import 'package:finalproject/app/navigation%20items/order/provider/orders_prov.dart';
+import 'package:finalproject/app/navigation%20items/order/provider/payment_prov.dart';
+import 'package:finalproject/app/navigation%20items/order/view/buynow.dart';
 import 'package:finalproject/app/navigation%20items/product/provider/product_prov.dart';
 import 'package:finalproject/app/navigation%20items/product/view/product_details_screen.dart';
 import 'package:finalproject/app/navigation%20items/profile/address/provider/address_prov.dart';
@@ -44,6 +46,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WishlistProv(context)),
         ChangeNotifierProvider(create: (context) => CartProvider(context)),
         ChangeNotifierProvider(create: (context) => AddressProvider(context)),
+        ChangeNotifierProvider(create: (context) => OrdersProvider()),
+        ChangeNotifierProvider(create: (context) => PaymentProvider()),
+
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

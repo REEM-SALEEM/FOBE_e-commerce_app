@@ -44,8 +44,8 @@ class WidgetGridView extends StatelessWidget {
                                 height: 150,
                                 fit: BoxFit.contain,
                                 image: NetworkImage(
-                                    'http://172.16.8.138:5000/products/${value.productList[index].image[0]}'),
-                                // 'http://192.168.1.11:5000/products/${value.productList[index].image[0]}'),
+                                    'http://172.16.10.216:5000/products/${value.productList[index].image[0]}'),
+                                // 'http://192.168.1.5:5000/products/${value.productList[index].image[0]}'),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
