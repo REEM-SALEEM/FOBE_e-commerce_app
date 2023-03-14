@@ -10,6 +10,12 @@ class AddressProvider extends ChangeNotifier {
   AddressProvider(context) {
     getAllAddress(context);
   }
+  int selectIndex = 0;
+
+  void addressSelect(int index) {
+    selectIndex = index;
+    notifyListeners();
+  }
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController pinController = TextEditingController();

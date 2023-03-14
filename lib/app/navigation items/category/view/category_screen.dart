@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:finalproject/app/navigation%20items/category/view/category_view.dart';
 import 'package:finalproject/app/navigation%20items/home/provider/home_prov.dart';
 import 'package:finalproject/app/navigation%20items/home/shimmer/product_shimmer.dart';
+import 'package:finalproject/app/navigation%20items/product/view/product_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,14 +45,11 @@ class CategoryScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
-                            // value.toProductScreen(context, index);
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  CatView(ids: provider[index].id),
-                            ));
+                            Navigator.of(context).pushNamed(
+                              ProvDetails.routeName,
+                              arguments: provider[index].id,
+                            );
                             log("argument passing: ${provider[index].id}");
-                            //--------------------------------------------------
-                            //  value.fromCategoryToProductView(context, index);
                           },
                           child: Container(
                             height: 160,
@@ -65,16 +63,42 @@ class CategoryScreen extends StatelessWidget {
                                   height: 150,
                                   fit: BoxFit.fill,
                                   image: NetworkImage(
-                                      'http://172.16.8.138:5000/products/${provider[index].image[index]}'),
+                                      'http://172.16.7.235:5000/products/${provider[index].image[index]}'),
                                   // 'http://192.168.1.11:5000/products/${provider[index].image[index]}'),
                                 ),
                                 Text(
-                                  provider[index].name.toString(),
+                                  value.productList[index].name.toString(),
                                   style: const TextStyle(
+                                      fontSize: 13,
+                                      fontFamily: "PTSerif-Regular",
                                       fontWeight: FontWeight.bold),
                                 ),
+                                const SizedBox(height: 5),
                                 Row(children: [
-                                  Text("₹${provider[index].price.toString()}")
+                                  Text(
+                                    "₹${value.productList[index].price.toString()}",
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 108, 107, 107),
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    "₹${value.productList[index].discountPrice.toString()}",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    '(${value.productList[index].offer.toString()}% OFF)',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: "PTSerif-Italic",
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ])
                               ],
                             ),

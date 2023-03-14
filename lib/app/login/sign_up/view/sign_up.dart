@@ -118,7 +118,7 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(18, 10, 18, 25),
-                    child: Consumer<SignUp>(
+                    child: Consumer<SignIn>(
                       builder: (BuildContext context, value1, Widget? child) {
                         return TextFormField(
                           controller: value.confirmpassword,
@@ -159,7 +159,8 @@ class SignUpScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30)),
                     ),
                     onPressed: () {
-                      value.setNotesData();
+                       Provider.of<SignUp>(context, listen: false)
+                              .setNotesData();
                       Provider.of<SignUp>(context, listen: false)
                           .signupUser(context);
                     },

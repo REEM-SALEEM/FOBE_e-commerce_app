@@ -1,12 +1,24 @@
 import 'dart:developer';
 
 import 'package:finalproject/app/login/sign_in/model/sign_in_model.dart';
+import 'package:finalproject/app/navigation%20items/navigation_bar/provider/index_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../navigation items/navigation_bar/view/navigationbar.dart';
 import '../../../services/sign_in_services.dart';
 
 class SignIn extends ChangeNotifier {
+  //-------------------------*Sharedprefs
+  //save name
+  Future<void> setNotesData() async {
+    final sharedprefs = await SharedPreferences
+        .getInstance(); //initialize object of shared preference
+    await sharedprefs.setString('saved_name', email.text);
+    notifyListeners();
+  }
+
 //---------------------------*Visibility (password)
   bool isobscure = true;
   Icon icon = const Icon(
@@ -86,10 +98,12 @@ class SignIn extends ChangeNotifier {
                 log('read =$value');
               }
             });
-
+            Provider.of<NavigationIndex>(context, listen: false).currentIndex =
+                0;
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => const BottomNavigationScreen(),
             ));
+
             //---
             clearTextfield();
           } else {

@@ -16,11 +16,49 @@ class HomeProv extends ChangeNotifier {
   }
 
 //-----------------------------------------------------*Get Categorylist
+
   bool isLoading = false;
   List<CategoryModel> categoryList = [];
+  List<ProductModel> searchData = [];
   CategoryServices category = CategoryServices();
 
   final icons = [];
+//-----------------------------------------------------*Search Visibility get set
+  bool _isVisible = false;
+  bool get isVisible => _isVisible;
+
+  set isVisible(bool value) {
+    _isVisible = value;
+    notifyListeners();
+  }
+
+  final searchController = TextEditingController();
+  getSearchResult(String value) {
+    searchData.clear();
+    notifyListeners();
+    for (var index in productList) {
+      if (index.name.toString().toLowerCase().contains(
+            value.toLowerCase(),
+          )) {
+        notifyListeners();
+        ProductModel data = ProductModel(
+            id: index.id,
+            name: index.name,
+            price: index.price,
+            discountPrice: index.discountPrice,
+            offer: index.offer,
+            size: index.size,
+            image: index.image,
+            category: index.category,
+            description: index.description,
+            rating: index.rating);
+        notifyListeners();
+        searchData.add(data);
+        notifyListeners();
+      }
+    }
+  }
+
   void getCategory(context) async {
     isLoading = true;
     notifyListeners();
@@ -97,7 +135,6 @@ class HomeProv extends ChangeNotifier {
 
   ProductModel findById(String id) {
     return productList.firstWhere((element) => element.id == id);
-   
   }
 
 //-----------------------------------------------------*Category Screen passing by id

@@ -24,13 +24,12 @@ class ProductDetailsWidget extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(0, 0, 04, 0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 7),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 9),
           child: Text(
             name,
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w400,
-              fontFamily: 'Manrope',
               height: 1.2,
               letterSpacing: 0.3,
             ),
@@ -40,13 +39,13 @@ class ProductDetailsWidget extends StatelessWidget {
           Text(
             '₹${price.toString()}',
             style: const TextStyle(
-              color: Color.fromARGB(255, 108, 107, 107),
+              color: Color.fromARGB(255, 185, 180, 180),
               decoration: TextDecoration.lineThrough,
-              fontSize: 25,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 7),
           Text(
             '₹${discountPrice.toString()}',
             style: const TextStyle(
@@ -69,24 +68,27 @@ class ProductDetailsWidget extends StatelessWidget {
           RichText(
             text: TextSpan(
                 text: rating,
-                style: const TextStyle(color: Colors.black),
+                style: const TextStyle(fontSize: 16,color: Colors.black),
                 children: [
                   WidgetSpan(
-                    child: RatingBar.builder(
-                      initialRating: double.parse(rating),
-                      itemSize: 15,
-                      minRating: 1,
-                      direction: Axis.horizontal,
-                      allowHalfRating: true,
-                      itemCount: 5,
-                      ignoreGestures: true,
-                      itemBuilder: (context, _) => const Icon(
-                        Icons.star,
-                        color: Colors.amber,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: RatingBar.builder(
+                        initialRating: double.parse(rating),
+                        itemSize: 15,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        ignoreGestures: true,
+                        itemBuilder: (context, _) => const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (startRating) {
+                          log(startRating.toString());
+                        },
                       ),
-                      onRatingUpdate: (startRating) {
-                        log(startRating.toString());
-                      },
                     ),
                   )
                 ]),

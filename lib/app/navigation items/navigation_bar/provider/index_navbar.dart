@@ -18,4 +18,8 @@ class NavigationIndex extends ChangeNotifier {
     currentIndex = value;
     notifyListeners();
   }
+  void toHomescreen() {
+    currentIndex = 0;
+    notifyListeners();
+  }
 }

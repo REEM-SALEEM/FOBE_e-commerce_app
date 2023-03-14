@@ -1,23 +1,19 @@
 class CartModel {
-  CartModel({
-    required this.productId,
-    required this.size,
-    required this.quantity,
-  });
-
   final String size;
   final int quantity;
   final String productId;
 
-  factory CartModel.fromJson(Map<String, dynamic> json) => CartModel(
-        productId: json["product"],
-        size: json["size"],
-        quantity: json["qty"],
-      );
+  CartModel({
+    required this.size,
+    required this.quantity,
+    required this.productId,
+  });
 
-  Map<String, dynamic> toJson() => {
-        "product": productId,
-        "size": size,
-        "qty": quantity,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'product': productId,
+      'size': size,
+      'qty': quantity,
+    };
+  }
 }

@@ -9,7 +9,7 @@ import 'package:finalproject/app/utils/dio_interceptor.dart';
 
 class AddressService {
   Future<String?> addAddress(CreateAddressModel model, context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       log('try');
       final Response response = await dios.post(
@@ -29,13 +29,13 @@ class AddressService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e);
     }
     return null;
   }
 
   Future<List<GetAddressModel>?> getAddress(context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.get(
         ApiBaseUrl().baseUrl + ApiEndPoints.address,
@@ -54,13 +54,13 @@ class AddressService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e);
     }
     return null;
   }
 
   Future<GetAddressModel?> getSingleAddress(context, String addressId) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.get(
         "${ApiBaseUrl().baseUrl + ApiEndPoints.address}/$addressId",
@@ -77,14 +77,14 @@ class AddressService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e );
     }
     return null;
   }
 
   Future<String?> updateAddress(
       CreateAddressModel model, String addressId, context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       log('try');
       final Response response = await dios.patch(
@@ -104,13 +104,13 @@ class AddressService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e);
     }
     return null;
   }
 
   Future<String?> deleteAddress(String addressId, context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       log('try');
       final Response response = await dios.delete(
@@ -129,7 +129,7 @@ class AddressService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e);
     }
     return null;
   }

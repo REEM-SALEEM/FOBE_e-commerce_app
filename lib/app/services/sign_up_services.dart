@@ -29,7 +29,7 @@ class SignupServices {
       }
     } on DioError catch (e) {
       print(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e, );
     }
     return null;
   }

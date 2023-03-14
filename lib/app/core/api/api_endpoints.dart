@@ -13,7 +13,7 @@ class ApiEndPoints {
   static String cart = 'api/v1/cart';
   //------------------------------------*Address
   static String address = 'api/v1/address';
-  static String orders = '/api/v1/orders';
+  static String orders = 'api/v1/orders';
   // static String google = 'api/v1/auth/google';
   static String refreshToken = 'api/v1/auth/refresh';
 }

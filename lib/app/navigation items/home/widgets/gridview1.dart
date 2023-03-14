@@ -44,7 +44,7 @@ class WidgetGridView extends StatelessWidget {
                                 height: 150,
                                 fit: BoxFit.contain,
                                 image: NetworkImage(
-                                    'http://172.16.10.216:5000/products/${value.productList[index].image[0]}'),
+                                    'http://172.16.7.235:5000/products/${value.productList[index].image[0]}'),
                                 // 'http://192.168.1.5:5000/products/${value.productList[index].image[0]}'),
                               ),
                               Padding(
@@ -53,6 +53,8 @@ class WidgetGridView extends StatelessWidget {
                                   Text(
                                     value.productList[index].name.toString(),
                                     style: const TextStyle(
+                                      fontSize: 13,
+                                        fontFamily: "PTSerif-Regular",
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 5),
@@ -77,6 +79,7 @@ class WidgetGridView extends StatelessWidget {
                                       '(${value.productList[index].offer.toString()}% OFF)',
                                       style: const TextStyle(
                                         fontSize: 12,
+                                          fontFamily: "PTSerif-Italic",
                                         color: Colors.orange,
                                         fontWeight: FontWeight.bold,
                                       ),

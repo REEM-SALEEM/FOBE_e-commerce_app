@@ -8,7 +8,7 @@ import 'package:finalproject/app/utils/dio_interceptor.dart';
 
 class CarouselServices {
   Future<List<CarouselModel>?> carouselUsers(context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response =
           await dios.get(ApiBaseUrl().baseUrl + ApiEndPoints.carousal);
@@ -23,7 +23,7 @@ class CarouselServices {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e, );
     }
     return null;
   }

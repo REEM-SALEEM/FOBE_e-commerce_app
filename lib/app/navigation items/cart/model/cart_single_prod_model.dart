@@ -12,7 +12,7 @@ class GetSingelCartProduct {
   String size;
   int qty;
   int price;
-  int discountPrice;
+  dynamic discountPrice;
   String id;
 
   factory GetSingelCartProduct.fromJson(Map<String, dynamic> json) =>
@@ -41,7 +41,7 @@ class Product {
   String id;
   String name;
   int price;
-  int discountPrice;
+  dynamic discountPrice;
   int offer;
   String rating;
   List<String> size;

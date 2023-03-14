@@ -1,68 +1,117 @@
 import 'dart:developer';
-import 'package:finalproject/app/navigation%20items/cart/model/cart_single_prod_model.dart';
-import 'package:finalproject/app/utils/error_snackbar.dart';
-import 'package:flutter/material.dart';
+
+import 'package:finalproject/app/navigation%20items/order/model/orders_model.dart';
+import 'package:finalproject/app/services/order_services.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PaymentProvider extends ChangeNotifier {
-  bool isLoading = false;
-  String paymentType = 'Online Payment';
-  List<Product> products = [];
-  Map<String, dynamic> options = {};
-  List<String>? productId;
-  String? addressId;
-
   Razorpay razorpay = Razorpay();
+  List<Product> products = [];
+  String? addressId;
+  Map<String, dynamic> options = {};
 
-  void openCheckout(int payableAmount, context) {
-    log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+  void setAddressId(String addressid) {
+    notifyListeners();
+    addressId = addressid;
+    notifyListeners();
+  }
+
+  void setTotalAmount(amount, List<String> productIds, address) {
+    final total = "${amount * 100}";
+    final amountPayable = total.toString();
+    setOptions(amountPayable);
+    products = productIds.map((e) => Product(id: e)).toList();
+    addressId = address;
+    notifyListeners();
+  }
+
+  void setOptions(amountPayable) async {
     options = {
-      "key": "rzp_test_boWotLKxahxvUM",
-      "amount": payableAmount * 100,
-      "name": "FOBE",
-      "description": "Watch",
-      "prefill": {"contact": "8891240830", "email": "fobe@gmail.com"},
+      'key': 'rzp_test_kfujDKwZbh4geF',
+      'amount': amountPayable,
+      'name': 'FOBE',
+      'description': 'Mobile Phones',
+      'prefill': {'contact': '8891240830', 'email': 'FOBE@razorpay.com'},
       'external': {
         'wallets': ['paytm']
       }
     };
-    notifyListeners();
+
     try {
       razorpay.open(options);
+
       razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
           (PaymentSuccessResponse response) {
-        SnackBarPop.popUp(
-            context, "Payment Success${response.paymentId}", Colors.green);
+        handlePaymentSuccess(response);
       });
-      notifyListeners();
+      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+          (PaymentFailureResponse response) {
+        handlePaymentError(response);
+      });
+      razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+          (ExternalWalletResponse response) {
+        handleExternalWallet(response);
+      });
     } on PaymentFailureResponse catch (e) {
       log(e.error.toString());
     }
   }
 
-  // payment handlers.
-  void handlerPaymentSuccess(PaymentSuccessResponse response, context) {
-    log("Payment success");
-    SnackBarPop.popUp(
-        context, "Payment Success${response.paymentId}", Colors.green);
+  void handlePaymentSuccess(PaymentSuccessResponse response) {
+    Fluttertoast.showToast(
+        msg: "SUCCESS:${response.paymentId}", timeInSecForIosWeb: 4);
+    orderProducts(addressId!, 'ONLINE_PAYMENT');
+    notifyListeners();
   }
 
-  void handlerErrorFailure(PaymentFailureResponse response, context) {
-    log("Payment error");
-    SnackBarPop.popUp(
-        context,
-        'Payment Cancelled${response.code.toString()} - ${response.message}',
-        Colors.red);
+  void handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR:${response.code} - ${response.message}",
+        timeInSecForIosWeb: 4);
+    notifyListeners();
   }
 
-  void handlerExternalWallet(context) {
-    log("External Wallet");
-    SnackBarPop.popUp(context, 'Externall Wallet', Colors.green);
+  void handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET:${response.walletName}", timeInSecForIosWeb: 4);
+    notifyListeners();
   }
 
-  // void findByProduct(context, model) {
-  //   Navigator.of(context)
-  //       .pushNamed(OrderPageScreen.routeName, arguments: model);
-  // }
+  bool loading = false;
+  Future<void> orderProducts(String addressId, paymentType) async {
+    loading = true;
+    notifyListeners();
+    final OrdersModel model = OrdersModel(
+      addressId: addressId,
+      paymentType: paymentType,
+      products: products,
+    );
 
+    await OrderService().placeOrder(model).then((value) {
+      if (value != null) {
+        loading = false;
+        notifyListeners();
+
+        // Navigator.of(NavigationService.navigatorKey.currentContext!)
+        //     .pushReplacement(CupertinoPageRoute(
+        //   builder: (context) {
+        //     return OrderDetials(
+        //       orderId: value,
+        //     );
+        //   },
+        // )).then((value) =>
+        //         Navigator.of(NavigationService.navigatorKey.currentContext!)
+        //             .pushAndRemoveUntil(CupertinoPageRoute(
+        //           builder: (context) {
+        //             return const BottomNav();
+        //           },
+        //         ), (route) => false));
+      } else {
+        loading = false;
+        notifyListeners();
+      }
+    });
+  }
 }

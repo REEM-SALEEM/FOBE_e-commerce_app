@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../login/sign_in/view/sign_in.dart';
+import '../../../navigation_bar/provider/index_navbar.dart';
 
 class ProfileProvider extends ChangeNotifier {
   String? savedName;
   String? savedEmail;
   String? savedPhone;
+
   //*get the saved name
   Future<void> getSavedData(BuildContext context) async {
     final sharedprefs = await SharedPreferences.getInstance();
@@ -16,7 +19,7 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
     savedEmail = sharedprefs.getString('saved_email');
     notifyListeners();
-     savedPhone = sharedprefs.getString('saved_phone');
+    savedPhone = sharedprefs.getString('saved_phone');
     notifyListeners();
   }
 
@@ -59,14 +62,18 @@ class ProfileProvider extends ChangeNotifier {
 
   FlutterSecureStorage storage = const FlutterSecureStorage();
   void logOut(context) async {
+    notifyListeners();
     await storage.delete(key: 'token');
     await storage.delete(key: 'refreshToken');
 
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const SignInScreen(),
-        ),
-        (route) => false);
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const SignInScreen(),
+      ),
+    );
+    Provider.of<NavigationIndex>(context, listen: false).currentIndex = 0;
+    notifyListeners();
+
     notifyListeners();
   }
 }

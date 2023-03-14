@@ -17,6 +17,8 @@ class CartProvider extends ChangeNotifier {
   bool isLoading = false;
   CartGetModel? cartList;
   List<String> cartItemsId = [];
+  List<String> cartitemsPayId = [];
+  
   int quantity = 1;
   int totalproductCount = 1;
   int? totalSave;
@@ -32,6 +34,7 @@ class CartProvider extends ChangeNotifier {
           cartList = value;
           notifyListeners();
           cartItemsId = cartList!.products.map((e) => e.product.id).toList();
+          cartitemsPayId = cartList!.products.map((e) => e.id).toList();
           totalSave = (cartList!.totalPrice - cartList!.totalDiscount).toInt();
           totalProductCount();
           notifyListeners();
@@ -92,13 +95,15 @@ class CartProvider extends ChangeNotifier {
   }
 
 //------------------------------------------------------*Quantity Inc/Dec
+
   void totalProductCount() {
     //-------------*Count
     int count = 0;
-    log("len= ${cartList!.products.length}");
+
     for (var i = 0; i < cartList!.products.length; i++) {
-      log(cartList!.products[i].qty.toString());
+      log(count.toString());
       count = count + cartList!.products[i].qty;
+      notifyListeners();
     }
     totalproductCount = count;
     log("tot = $totalproductCount");
@@ -121,6 +126,7 @@ class CartProvider extends ChangeNotifier {
             if (value != null) {
               log("get = ${value.toString()}");
               cartList = value;
+              log('true${cartList!.products[0].qty.toString()}');
               notifyListeners();
 
               totalProductCount();

@@ -24,7 +24,7 @@ class VerifyOtpService {
     } on DioError catch (e) {
       log(e.message);
       log('verification faliled');
-      DioException().dioError(e, context);
+      DioException().dioError(e,);
     }
     return null;
   }

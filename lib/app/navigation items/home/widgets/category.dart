@@ -43,7 +43,7 @@ class WidgetCategoryListview extends StatelessWidget {
                                   child: CircleAvatar(
                                     radius: 40,
                                     backgroundImage: NetworkImage(
-                                        "http://172.16.10.216:5000/category/${value.categoryList[index].image}"),
+                                        "http://172.16.7.235:5000/category/${value.categoryList[index].image}"),
                                     // "http://192.168.1.5:5000/category/${value.categoryList[index].image}"),
                                   ),
                                 ),
@@ -52,6 +52,7 @@ class WidgetCategoryListview extends StatelessWidget {
                                     Text(
                                       value.categoryList[index].name,
                                       style: const TextStyle(
+                                        
                                           color: kBlackcolor, fontSize: 15),
                                     ),
                                   ],

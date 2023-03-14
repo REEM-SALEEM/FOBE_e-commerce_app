@@ -12,7 +12,7 @@ import 'package:finalproject/app/utils/dio_interceptor.dart';
 class CartService {
 //---------------------------------------*ADD CART
   Future<String?> addToCart(CartModel model, context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.post(
         ApiBaseUrl().baseUrl + ApiEndPoints.cart,
@@ -28,14 +28,14 @@ class CartService {
       }
     } on DioError catch (e) {
       // log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e, );
     }
     return null;
   }
 
 //---------------------------------------*GET CART
   Future<CartGetModel?> getCart(context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.get(
         ApiBaseUrl().baseUrl + ApiEndPoints.cart,
@@ -52,14 +52,14 @@ class CartService {
       }
     } on DioError catch (e) {
       // log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e, );
     }
     return null;
   }
 
 //---------------------------------------*REMOVE CART
   Future<String?> removeFromCart(context, String id) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.patch(
         ApiBaseUrl().baseUrl + ApiEndPoints.cart,
@@ -73,7 +73,7 @@ class CartService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e, );
     }
     return null;
   }
@@ -81,7 +81,7 @@ class CartService {
   //------------------------------------
   Future<List<GetSingelCartProduct>?> getSingleCart(
       context, String productId, String cartId) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.get(
         "${ApiBaseUrl().baseUrl + ApiEndPoints.cart}/$cartId/product/$productId",
@@ -100,7 +100,7 @@ class CartService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e, );
     }
     return null;
   }

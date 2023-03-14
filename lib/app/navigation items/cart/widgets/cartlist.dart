@@ -4,6 +4,10 @@ import 'package:finalproject/app/navigation%20items/cart/provider/cart_prov.dart
 import 'package:finalproject/app/navigation%20items/cart/shimmer/cart_shimmer.dart';
 import 'package:finalproject/app/navigation%20items/cart/widgets/cartalert.dart';
 import 'package:finalproject/app/navigation%20items/home/provider/home_prov.dart';
+import 'package:finalproject/app/navigation%20items/order/provider/orders_prov.dart';
+import 'package:finalproject/app/navigation%20items/profile/address/provider/address_prov.dart';
+import 'package:finalproject/app/navigation%20items/profile/address/view/address_add.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +19,9 @@ class CartListviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<HomeProv, CartProvider>(
-      builder: (context, home, cart, child) {
+    final provider = Provider.of<CartProvider>(context);
+    return Consumer3<HomeProv, CartProvider,OrdersProvider>(
+      builder: (context, home, cart,order, child) {
         return cart.isLoading == true
             ? const CartShimmer()
             : ListView.separated(
@@ -38,7 +43,7 @@ class CartListviewWidget extends StatelessWidget {
                             color: const Color.fromARGB(255, 248, 246, 246)
                                 .withOpacity(0.9),
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(7.0),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -68,9 +73,14 @@ class CartListviewWidget extends StatelessWidget {
                                                   cart.cartList!.products[index]
                                                       .product.name,
                                                   style: const TextStyle(
-                                                      fontSize: 15,
+                                                      fontFamily:
+                                                          "PTSerif-Regular",
+                                                      color: Color.fromARGB(
+                                                          255, 49, 47, 47),
+                                                      fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.bold),
+                                                          FontWeight.w700,
+                                                      letterSpacing: .6),
                                                 ),
                                                 const SizedBox(height: 5),
                                                 RatingBar.builder(
@@ -98,20 +108,41 @@ class CartListviewWidget extends StatelessWidget {
                                                 const SizedBox(height: 5),
                                                 //----------------------*Price, Offer
                                                 Row(children: [
+                                                  const Text(
+                                                    '₹',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  ),
                                                   Text(
-                                                    "₹${(cart.cartList!.products[index].product.price - cart.cartList!.products[index].product.discountPrice).round()}",
+                                                    "${(cart.cartList!.products[index].product.price - cart.cartList!.products[index].product.discountPrice).round()}",
                                                     style: const TextStyle(
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      fontSize: 18,
+                                                        fontFamily:
+                                                            "PTSerif-Regular",
+                                                        color: Color.fromARGB(
+                                                            255, 49, 47, 47),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        letterSpacing: .3),
+                                                  ),
+                                                  const SizedBox(width: 7),
+                                                  const Text(
+                                                    '₹',
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
                                                       fontWeight:
                                                           FontWeight.bold,
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 5),
                                                   Text(
-                                                    "₹${cart.cartList!.products[index].product.price}",
+                                                    "${cart.cartList!.products[index].product.price}",
                                                     style: const TextStyle(
+                                                      fontFamily:
+                                                          "PTSerif-Regular",
                                                       color: Colors.grey,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -123,6 +154,9 @@ class CartListviewWidget extends StatelessWidget {
                                                   Text(
                                                     "${cart.cartList!.products[index].product.offer}%Off",
                                                     style: const TextStyle(
+                                                      fontFamily:
+                                                          "PTSerif-Italic",
+                                                      letterSpacing: 1,
                                                       color: Colors.orange,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -130,37 +164,68 @@ class CartListviewWidget extends StatelessWidget {
                                                     ),
                                                   ),
                                                 ]),
-                                                const SizedBox(height: 15),
-                                                //----------------------*Button
+                                                const SizedBox(height: 5),
+                                                //---------------------------------------------------*Button (Buy NOW)
                                                 Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .spaceAround,
                                                     children: [
                                                       SizedBox(
-                                                        child: ElevatedButton(
-                                                          onPressed: () {},
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                            backgroundColor:
-                                                                Colors.black,
-                                                            elevation: 1,
-                                                            shape:
-                                                                const RoundedRectangleBorder(),
-                                                          ),
-                                                          child: const Text(
-                                                            'Buy Now',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontFamily:
-                                                                    'Manrope',
-                                                                letterSpacing:
-                                                                    1,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
+                                                        child: Consumer2<
+                                                            OrdersProvider,AddressProvider>(
+                                                          builder: (BuildContext
+                                                                  context,
+                                                              value,address,
+                                                              Widget? child) {
+                                                            return ElevatedButton(
+                                                              onPressed: () {
+                                                                  address.addressList.isEmpty
+                                                ? Navigator.of(context)
+                                                    .push(CupertinoPageRoute(
+                                                    builder: (context) =>
+                                                        const AddressViewnAdd(),
+                                                  ))
+                                                :   value
+                                                                    .toOrderScreen(
+                                                                  context,
+                                                                  provider
+                                                                      .cartList!
+                                                                      .products[
+                                                                          index]
+                                                                      .product
+                                                                      .id,
+                                                                  provider
+                                                                      .cartList!
+                                                                      .id,
+                                                                );
+                                                                 order.isLoading = false;
+                                                              },
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .black,
+                                                                elevation: 1,
+                                                                shape:
+                                                                    const RoundedRectangleBorder(),
+                                                              ),
+                                                              child: const Text(
+                                                                'Buy Now',
+                                                                style: TextStyle(
+                                                                    fontFamily:
+                                                                        "PTSerif-Regular",
+                                                                    color: Colors
+                                                                        .white,
+                                                                    letterSpacing:
+                                                                        1,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                            );
+                                                          },
                                                         ),
                                                       ),
                                                       //----------------------*Dec & Inc
@@ -185,7 +250,7 @@ class CartListviewWidget extends StatelessWidget {
                                                                   .cartList!
                                                                   .products[
                                                                       index]
-                                                                  .size!,
+                                                                  .size,
                                                               cart
                                                                   .cartList!
                                                                   .products[
@@ -193,6 +258,11 @@ class CartListviewWidget extends StatelessWidget {
                                                                   .qty,
                                                               context,
                                                             );
+                                                              log(cart
+                                                                .cartList!
+                                                                .products[index]
+                                                                .qty
+                                                                .toString());
                                                           },
                                                           child: Container(
                                                             height: 25,
@@ -230,7 +300,7 @@ class CartListviewWidget extends StatelessWidget {
                                                           ),
                                                           child: Center(
                                                             child: Text(
-                                                              "${cart.cartList!.products[index].qty}",
+                                                              "${cart.cartList!.products[index].qty.toInt()}",
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,
@@ -257,7 +327,7 @@ class CartListviewWidget extends StatelessWidget {
                                                                   .cartList!
                                                                   .products[
                                                                       index]
-                                                                  .size!,
+                                                                  .size,
                                                               cart
                                                                   .cartList!
                                                                   .products[
@@ -305,7 +375,6 @@ class CartListviewWidget extends StatelessWidget {
                                             },
                                             child: const Icon(Icons.close)),
                                       ]),
-                                  const SizedBox(height: 5),
                                 ],
                               ),
                             ),

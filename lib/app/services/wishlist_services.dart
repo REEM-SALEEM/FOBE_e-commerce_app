@@ -9,7 +9,7 @@ import 'package:finalproject/app/utils/dio_interceptor.dart';
 
 class WishlistService {
   Future<int?> addOrRemoveWishlist(context, productId) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response =
           await dios.post(ApiBaseUrl().baseUrl + ApiEndPoints.wishlist, data: {
@@ -22,13 +22,13 @@ class WishlistService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e, );
     }
     return null;
   }
 
   Future<WishListModel?> getWishlist(context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.get(
         ApiBaseUrl().baseUrl + ApiEndPoints.wishlist,
@@ -39,7 +39,7 @@ class WishlistService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e);
     }
     return null;
   }

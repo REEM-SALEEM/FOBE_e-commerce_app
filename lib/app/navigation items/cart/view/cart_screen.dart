@@ -1,5 +1,11 @@
 import 'package:finalproject/app/navigation%20items/cart/provider/cart_prov.dart';
 import 'package:finalproject/app/navigation%20items/cart/widgets/cartlist.dart';
+import 'package:finalproject/app/navigation%20items/order/model/order_argument.dart';
+import 'package:finalproject/app/navigation%20items/order/provider/orders_prov.dart';
+import 'package:finalproject/app/navigation%20items/order/view/buynow.dart';
+import 'package:finalproject/app/navigation%20items/profile/address/provider/address_prov.dart';
+import 'package:finalproject/app/navigation%20items/profile/address/view/address_add.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,19 +14,23 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<CartProvider>(context, listen: false).getCart(context);
+    });
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: SizedBox(
-            height: 250,
-            width: 200,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Image.asset('assets/cart.png'),
-            )),
-        // elevation: 0,
+        title: const Text(
+          'CART',
+          style: TextStyle(
+              color: Color.fromARGB(255, 54, 52, 52),
+              letterSpacing: 1,
+              fontFamily: 'Teko-Medium',
+              fontWeight: FontWeight.normal,
+              fontSize: 25),
+        ),
         backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -33,10 +43,23 @@ class CartScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: Consumer<CartProvider>(
-        builder: (context, value, child) {
+      bottomNavigationBar: Consumer3<CartProvider, AddressProvider,OrdersProvider>(
+        builder: (context, value, address,order, child) {
           return value.cartList == null || value.cartList!.products.isEmpty
-              ? const SizedBox()
+              ? SizedBox(
+                  height: MediaQuery.of(context).size.height / 1.3,
+                  child: const Center(
+                    child: Text(
+                      'CART IS EMPTY',
+                      style: TextStyle(
+                          color: Colors.grey,
+                          letterSpacing: 1,
+                          fontFamily: 'Teko-Medium',
+                          fontWeight: FontWeight.normal,
+                          fontSize: 15),
+                    ),
+                  ),
+                )
               : Row(
                   children: [
                     Material(
@@ -52,6 +75,8 @@ class CartScreen extends StatelessWidget {
                               const Text(
                                 'Total Price',
                                 style: TextStyle(
+                                  letterSpacing: 1,
+                                  fontFamily: "PTSerif-Regular",
                                   color: Colors.black,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -60,8 +85,10 @@ class CartScreen extends StatelessWidget {
                               Text(
                                 '${value.totalSave}',
                                 style: const TextStyle(
+                                  fontFamily: "PTSerif-Italic",
                                   color: Color.fromARGB(255, 239, 83, 72),
                                   fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
                                   fontSize: 18,
                                 ),
                               ),
@@ -72,7 +99,23 @@ class CartScreen extends StatelessWidget {
                       height: MediaQuery.of(context).size.height * 0.07,
                       width: MediaQuery.of(context).size.width / 2,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          address.addressList.isEmpty
+                              ? Navigator.of(context).push(CupertinoPageRoute(
+                                  builder: (context) => const AddressViewnAdd(),
+                                ))
+                              : Navigator.of(context).push(CupertinoPageRoute(
+                                  builder: (context) {
+                                    return const OrderScreen(
+                                      screenCheck: OrderSummaryScreenEnum
+                                          .normalOrderSummaryScreen,
+                                      cartId: '',
+                                      productId: '',
+                                    );
+                                  },
+                                ));
+                          order.isLoading = false;
+                        },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
                             elevation: 1,
@@ -80,6 +123,7 @@ class CartScreen extends StatelessWidget {
                         child: const Text(
                           'Place Order',
                           style: TextStyle(
+                            fontFamily: "PTSerif-Regular",
                             color: Colors.white,
                             letterSpacing: 1,
                             fontWeight: FontWeight.bold,

@@ -28,15 +28,18 @@ class AdressForm extends StatelessWidget {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
+            centerTitle: true,
             elevation: 0,
             backgroundColor: Colors.white,
-            title: const Text(
-              "Add Address",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+              title: const Text(
+          'ADD ADDRESS',
+          style: TextStyle(
+              color: Color.fromARGB(255, 94, 90, 90),
+              letterSpacing: 1,
+              fontFamily: 'Teko-Medium',
+              fontWeight: FontWeight.normal,
+              fontSize: 25),
+        ),
           ),
           body: Padding(
             padding: const EdgeInsets.all(10.0),

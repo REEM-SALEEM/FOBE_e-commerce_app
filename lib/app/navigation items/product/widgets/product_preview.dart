@@ -25,7 +25,7 @@ class PreviewProductWidget extends StatelessWidget {
                 image: DecorationImage(
                   fit: BoxFit.contain,
                   image: NetworkImage(
-                    'http://172.16.8.138:5000/products/${image[index]}',
+                    'http://172.16.7.235:5000/products/${image[index]}',
                   ),
                 ),
               ),

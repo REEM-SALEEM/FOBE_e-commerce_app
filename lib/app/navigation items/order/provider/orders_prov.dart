@@ -1,28 +1,59 @@
 import 'dart:developer';
 
 import 'package:finalproject/app/navigation%20items/cart/model/cart_single_prod_model.dart';
+import 'package:finalproject/app/navigation%20items/order/model/order_argument.dart';
 import 'package:finalproject/app/navigation%20items/order/model/orders_get_model.dart';
+import 'package:finalproject/app/navigation%20items/order/view/buynow.dart';
 import 'package:finalproject/app/navigation%20items/profile/address/model/addressget_model.dart';
 import 'package:finalproject/app/services/address_services.dart';
 import 'package:finalproject/app/services/cart_services.dart';
 import 'package:finalproject/app/services/order_services.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
-class OrdersProvider extends ChangeNotifier {
-  bool isLoading = false;
+class OrdersProvider with ChangeNotifier {
+  List<GetOrderModel>? ordersList = [];
 
-  List<GetOrderModel> orderList = [];
   GetOrderModel? getSingleOrder;
+  String? deliveryDate;
   GetAddressModel? addressModel;
-  List<GetSingelCartProduct> cartModel = [];
-  int? totalSave;
 
-  void getAllOrders(context) async {
+  bool isLoading = false;
+  List<GetSingelCartProduct> cartModel = [];
+  String? totalSave;
+  List<String> productIds = [];
+
+  void toOrderScreen(context, productId, cartId) {
+    getSingleCart(
+      context,
+      productId,
+      cartId,
+    );
+    log(cartId);
+    log(productId);
+    log(OrderSummaryScreenEnum.buyOneProductOrderSummaryScreen.index
+        .toString());
+    notifyListeners();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return OrderScreen(
+              cartId: cartId,
+              productId: productId,
+              screenCheck:
+                  OrderSummaryScreenEnum.buyOneProductOrderSummaryScreen);
+        },
+      ),
+    );
+    notifyListeners();
+  }
+
+  void getAllOrders() async {
     isLoading = true;
     notifyListeners();
-    await OrderService().getAllOrders(context).then((value) {
+    await OrderService().getAllOrders().then((value) {
       if (value != null) {
-        orderList = value;
+        ordersList = value;
         notifyListeners();
         isLoading = false;
         notifyListeners();
@@ -34,10 +65,10 @@ class OrdersProvider extends ChangeNotifier {
     return null;
   }
 
-  void getSingleOrders(context, String orderId) async {
+  void getSingleOrders( String orderId) async {
     isLoading = true;
     notifyListeners();
-    await OrderService().getSingleOrders(context, orderId).then((value) {
+    await OrderService().getSingleOrders(orderId).then((value) {
       if (value != null) {
         getSingleOrder = value;
         notifyListeners();
@@ -51,10 +82,10 @@ class OrdersProvider extends ChangeNotifier {
     return null;
   }
 
-  void cancelOrders(context, String orderId) async {
+  void cancelOrders( String orderId) async {
     isLoading = true;
     notifyListeners();
-    await OrderService().cancelOrder(context, orderId).then((value) {
+    await OrderService().cancelOrder( orderId).then((value) {
       if (value != null) {
         isLoading = false;
         notifyListeners();
@@ -92,13 +123,31 @@ class OrdersProvider extends ChangeNotifier {
       if (value != null) {
         cartModel = value;
         notifyListeners();
-        totalSave = (cartModel[0].price - cartModel[0].discountPrice).round();
+        
         notifyListeners();
       } else {
         isLoading = false;
         notifyListeners();
       }
     });
-    return null;
+  }
+
+  void sendOrderDetials(context) {
+    Share.share(
+        "ShoeCart Order -Order Id:${getSingleOrder!.id},Total Products:${getSingleOrder!.products.length},Total Price:${getSingleOrder!.totalPrice},Delivery Date:$deliveryDate");
+  }
+
+  String? formatDate(String date) {
+    final a = date.split(' ');
+    return a[0];
+  }
+
+  String? formatCancelDate(String? date) {
+    if (date != null) {
+      final a = date.split('T');
+      return a[0];
+    } else {
+      return null;
+    }
   }
 }

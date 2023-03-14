@@ -9,20 +9,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends ChangeNotifier {
-  //-------------------------*Sharedprefs
+  // //-------------------------*Sharedprefs
   //save name
   Future<void> setNotesData() async {
     final sharedprefs = await SharedPreferences
         .getInstance(); //initialize object of shared preference
-    await sharedprefs.setString('saved_name', fullname.text);
-    notifyListeners();
-    log(".......................................${fullname.text}");
-    await sharedprefs.setString('saved_email', email.text);
-    notifyListeners();
-    await sharedprefs.setString('saved_phone', phone.text);
+    await sharedprefs.setString('saved_name', email.text);
     notifyListeners();
   }
-
 //---------------------------*Username Validation
   final TextEditingController fullname = TextEditingController();
 

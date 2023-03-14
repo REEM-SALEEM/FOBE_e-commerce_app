@@ -1,3 +1,5 @@
+import 'package:finalproject/app/navigation%20items/order/provider/orders_prov.dart';
+import 'package:finalproject/app/navigation%20items/order/view/buynow.dart';
 import 'package:finalproject/app/navigation%20items/profile/address/model/address_model.dart';
 import 'package:finalproject/app/navigation%20items/profile/address/provider/address_prov.dart';
 import 'package:finalproject/app/navigation%20items/profile/address/provider/profile_prov.dart';
@@ -27,118 +29,165 @@ class AddressViewnAdd extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  child: Consumer<AddressProvider>(
-                    builder: (context, value, child) {
+                  child: Consumer2<AddressProvider, OrdersProvider>(
+                    builder: (context, value, order, child) {
                       return value.addressList.isEmpty
-                          ? const Center(child: Text('Add Address'))
+                          ? const Center(
+                              child: Text(
+                                'NO ADDRESS',
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    letterSpacing: 1,
+                                    fontFamily: 'Teko-Medium',
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 15),
+                              ),
+                            )
                           : ListView.separated(
                               physics: const ScrollPhysics(),
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
-                                return Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                value.addressList[index]
-                                                    .fullName,
-                                                style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Container(
-                                                height: 20,
-                                                width: 50,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.orange,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5)),
-                                                child: Center(
-                                                  child: Text(
-                                                    value.addressType,
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
+                                return InkWell(
+                                  onTap: () {
+                                    value.addressSelect(index);
+                                  },
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  value.addressList[index]
+                                                      .fullName,
+                                                  style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            value.addressList[index].address,
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          Text(
-                                            "PIN: ${value.addressList[index].pin}",
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          Text(
-                                            value.addressList[index].state,
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            value.addressList[index].phone,
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          const Divider(
-                                            color: Colors.black,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) {
-                                                          return AdressForm(
-                                                            addressScreenCheck:
-                                                                AddressScreen
-                                                                    .editAddressScreen,
-                                                            addressId: value
-                                                                .addressList[
-                                                                    index]
-                                                                .id,
-                                                          );
-                                                        },
+                                                Wrap(children: [
+                                                  index == value.selectIndex
+                                                      ? Container(
+                                                          height: 20,
+                                                          width: 50,
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors.green,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          child: const Center(
+                                                              child: Text(
+                                                            'Default',
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )),
+                                                        )
+                                                      : const SizedBox(),
+                                                  const SizedBox(width: 5),
+                                                  Container(
+                                                    height: 20,
+                                                    width: 50,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.orange,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5)),
+                                                    child: Center(
+                                                      child: Text(
+                                                        value.addressList[index]
+                                                            .title,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
                                                       ),
-                                                    );
-                                                  },
-                                                  child: const Text('Edit')),
-                                              const VerticalDivider(
-                                                color: Colors.black,
-                                              ),
-                                              TextButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return AddressAlertWidget(
-                                                            index: index);
-                                                      },
-                                                    );
-                                                  },
-                                                  child: const Text('Remove')),
-                                            ],
-                                          )
-                                        ]),
+                                                    ),
+                                                  ),
+                                                ]),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              value.addressList[index].address,
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            Text(
+                                              "PIN: ${value.addressList[index].pin}",
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            Text(
+                                              value.addressList[index].state,
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              value.addressList[index].phone,
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            const Divider(
+                                              color: Colors.black,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) {
+                                                            return AdressForm(
+                                                              addressScreenCheck:
+                                                                  AddressScreen
+                                                                      .editAddressScreen,
+                                                              addressId: value
+                                                                  .addressList[
+                                                                      index]
+                                                                  .id,
+                                                            );
+                                                          },
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: const Text('Edit')),
+                                                const VerticalDivider(
+                                                  color: Colors.black,
+                                                ),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AddressAlertWidget(
+                                                              index: index);
+                                                        },
+                                                      );
+                                                    },
+                                                    child:
+                                                        const Text('Remove')),
+                                              ],
+                                            )
+                                          ]),
+                                    ),
                                   ),
                                 );
                               },

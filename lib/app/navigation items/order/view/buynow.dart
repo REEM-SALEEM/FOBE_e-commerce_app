@@ -2,18 +2,29 @@ import 'dart:developer';
 
 import 'package:finalproject/app/core/api/api_baseurl.dart';
 import 'package:finalproject/app/navigation%20items/cart/provider/cart_prov.dart';
-import 'package:finalproject/app/navigation%20items/home/provider/home_prov.dart';
+import 'package:finalproject/app/navigation%20items/order/model/order_argument.dart';
+import 'package:finalproject/app/navigation%20items/order/provider/orders_prov.dart';
 import 'package:finalproject/app/navigation%20items/order/provider/payment_prov.dart';
+import 'package:finalproject/app/navigation%20items/order/widgets/addresslist.dart';
 import 'package:finalproject/app/navigation%20items/profile/address/provider/address_prov.dart';
+import 'package:finalproject/app/navigation%20items/profile/address/view/address_add.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class OrderScreen extends StatefulWidget {
-  const OrderScreen({super.key});
-  static const routeName = "/orders_page";
+  const OrderScreen(
+      {super.key,
+      required this.screenCheck,
+      required this.cartId,
+      required this.productId});
 
+  final OrderSummaryScreenEnum screenCheck;
+
+  final String cartId;
+  final String productId;
   @override
   State<OrderScreen> createState() => _OrderScreenState();
 }
@@ -23,16 +34,16 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   void initState() {
-    final paymentProvider =
-        Provider.of<PaymentProvider>(context, listen: false);
+    // final paymentProviderr =
+    //     Provider.of<PaymentProvider>(context, listen: false);
     final razorpay = paymentProvider.razorpay;
     log('looo');
     razorpay.on(
-        Razorpay.EVENT_PAYMENT_SUCCESS, paymentProvider.handlerPaymentSuccess);
+        Razorpay.EVENT_PAYMENT_SUCCESS, paymentProvider.handlePaymentSuccess);
     razorpay.on(
-        Razorpay.EVENT_PAYMENT_ERROR, paymentProvider.handlerErrorFailure);
+        Razorpay.EVENT_PAYMENT_ERROR, paymentProvider.handlePaymentError);
     razorpay.on(
-        Razorpay.EVENT_EXTERNAL_WALLET, paymentProvider.handlerExternalWallet);
+        Razorpay.EVENT_EXTERNAL_WALLET, paymentProvider.handleExternalWallet);
     super.initState();
   }
 
@@ -44,230 +55,463 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments as String;
-    final provider =
-        Provider.of<HomeProv>(context, listen: false).findById(args);
-    final data = Provider.of<CartProvider>(context, listen: false);
+    final paymentProvier = Provider.of<PaymentProvider>(context, listen: false);
+    final cartprovider = Provider.of<CartProvider>(context, listen: false);
+    final addressProvider =
+        Provider.of<AddressProvider>(context, listen: false);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<OrdersProvider>(context, listen: false)
+          .getSingleCart(context, widget.productId, widget.cartId);
+
+      paymentProvier.setAddressId(
+          addressProvider.addressList[addressProvider.selectIndex].id);
+      Provider.of<OrdersProvider>(context, listen: false).productIds.insert(0,
+          cartprovider.cartitemsPayId[cartprovider.cartitemsPayId.length - 1]);
+      log("cxvxcv${Provider.of<OrdersProvider>(context, listen: false).productIds.toString()}");
+    });
     return Scaffold(
-      body: Consumer<AddressProvider>(
-        builder: (BuildContext context, value, Widget? child) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(children: [
-              ListView.separated(
-                  physics: const ScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      color: const Color.fromARGB(255, 233, 230, 230),
-                      child: Padding(
-                        padding: const EdgeInsets.all(7.0),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Deliver to,",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    value.addressList[index].fullName,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Container(
-                                    height: 20,
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                        color: Colors.orange,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Center(
-                                      child: Text(
-                                        value.addressType,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                value.addressList[index].address,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              Text(
-                                "PIN: ${value.addressList[index].pin}",
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              Text(
-                                value.addressList[index].state,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                value.addressList[index].phone,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(height: 10),
-                            ]),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) => const SizedBox(),
-                  itemCount: 1),
-              //----------------------------------------------------
-              ListView.separated(
-                physics: const ScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {},
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                height: 140,
-                                width: 110,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                    '${ApiBaseUrl().baseUrl}/products/${provider.image[0]}',
-                                  ),
-                                )),
-                              ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text('Order summary'),
+      ),
+      body: Consumer3<AddressProvider, OrdersProvider, CartProvider>(
+        builder: (context, value, order, cart, child) {
+          return order.isLoading == true
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      value.addressList.isEmpty
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : AddressWidget(
+                              name:
+                                  value.addressList[value.selectIndex].fullName,
+                              title: value.addressList[value.selectIndex].title,
+                              address:
+                                  '''${value.addressList[value.selectIndex].address},
+${value.addressList[value.selectIndex].state} - ${value.addressList[value.selectIndex].pin}
+Land Mark - ${value.addressList[value.selectIndex].landMark}
+''',
+                              number:
+                                  value.addressList[value.selectIndex].phone,
+                              onPreesed: () {
+                                Navigator.of(context).push(CupertinoPageRoute(
+                                  builder: (context) {
+                                    return const AddressViewnAdd();
+                                  },
+                                ));
+                              },
                             ),
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
+                      //-----------------------*Product details
+                      const SizedBox(height: 10),
+                      ListView.separated(
+                        itemCount: widget.screenCheck ==
+                                OrderSummaryScreenEnum.normalOrderSummaryScreen
+                            ? cart.cartList!.products.length
+                            : 1,
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: const EdgeInsets.all(10),
+                            color: Colors.white,
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 90,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                    // provider.cartList.length - 1
+                                    image: NetworkImage(
+                                      widget.screenCheck ==
+                                              OrderSummaryScreenEnum
+                                                  .normalOrderSummaryScreen
+                                          ? '${ApiBaseUrl().baseUrl}/products/${cart.cartList!.products[index].product.image[0]}'
+                                          : '${ApiBaseUrl().baseUrl}/products/${order.cartModel[0].product.image[0]}',
+                                    ),
+                                  )),
+                                ),
+                                const SizedBox(width: 10),
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Wrap(children: [
-                                      Text(
-                                        provider.name,
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          .7,
+                                      child: Text(
+                                        widget.screenCheck ==
+                                                OrderSummaryScreenEnum
+                                                    .normalOrderSummaryScreen
+                                            ? cart.cartList!.products[index]
+                                                .product.name
+                                            : order.cartModel[0].product.name,
                                         style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
-                                    ]),
-                                    const SizedBox(height: 5),
-                                    RatingBar.builder(
-                                      initialRating:
-                                          double.parse(provider.rating),
-                                      itemSize: 15,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      allowHalfRating: true,
-                                      ignoreGestures: true,
-                                      itemBuilder: (context, _) => const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      ),
-                                      onRatingUpdate: (startRating) {
-                                        log(startRating.toString());
-                                      },
                                     ),
-                                    const SizedBox(height: 5),
+                                    const SizedBox(height: 3),
+                                    RatingBar.builder(
+                                      ignoreGestures: true,
+                                      allowHalfRating: true,
+                                      onRatingUpdate: (value) {},
+                                      itemBuilder: (context, hello) {
+                                        return const Icon(
+                                          Icons.star,
+                                          color:
+                                              Color.fromARGB(255, 24, 110, 29),
+                                        );
+                                      },
+                                      itemSize: 16,
+                                      initialRating: double.parse(
+                                        widget.screenCheck ==
+                                                OrderSummaryScreenEnum
+                                                    .normalOrderSummaryScreen
+                                            ? cart.cartList!.products[index]
+                                                .product.rating
+                                            : order.cartModel[0].product.rating,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
                                     Row(
                                       children: [
                                         Text(
-                                          "₹${provider.price}",
+                                          widget.screenCheck ==
+                                                  OrderSummaryScreenEnum
+                                                      .normalOrderSummaryScreen
+                                              ? "${cart.cartList!.products[index].product.offer}%off"
+                                              : "${order.cartModel[0].product.offer}%off",
                                           style: const TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 108, 107, 107),
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.orange,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          widget.screenCheck ==
+                                                  OrderSummaryScreenEnum
+                                                      .normalOrderSummaryScreen
+                                              ? "₹${cart.cartList!.products[index].product.price}"
+                                              : "${order.cartModel[0].product.price}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
                                             decoration:
                                                 TextDecoration.lineThrough,
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey,
                                           ),
                                         ),
                                         const SizedBox(width: 5),
                                         Text(
-                                          "₹${provider.discountPrice}",
+                                          widget.screenCheck ==
+                                                  OrderSummaryScreenEnum
+                                                      .normalOrderSummaryScreen
+                                              ? "₹${(cart.cartList!.products[index].product.price - cart.cartList!.products[index].product.discountPrice).round()}"
+                                              : "₹${(order.cartModel[0].product.price - order.cartModel[0].product.discountPrice).round()}",
                                           style: const TextStyle(
-                                            fontSize: 17,
                                             fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          "(${provider.offer}%)",
-                                          style: const TextStyle(
-                                            fontSize: 17,
-                                            color: Colors.orange,
-                                            fontWeight: FontWeight.bold,
+                                            overflow: TextOverflow.clip,
                                           ),
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(height: 10),
+                                    widget.screenCheck ==
+                                            OrderSummaryScreenEnum
+                                                .normalOrderSummaryScreen
+                                        ? Text(
+                                            '${cart.cartList!.products[index].qty} Item',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey,
+                                            ),
+                                          )
+                                        : const SizedBox()
                                   ],
                                 ),
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 20);
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Price Details",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Price',
+                                ),
+                                Text(
+                                  widget.screenCheck ==
+                                          OrderSummaryScreenEnum
+                                              .normalOrderSummaryScreen
+                                      ? "₹${cart.cartList!.totalPrice}"
+                                      : "₹${order.cartModel[0].product.price}",
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Discount Price',
+                                ),
+                                Text(
+                                  widget.screenCheck ==
+                                          OrderSummaryScreenEnum
+                                              .normalOrderSummaryScreen
+                                      ? "₹${cart.cartList!.totalDiscount.toStringAsFixed(0)}"
+                                      : "₹${order.cartModel[0].product.discountPrice.toStringAsFixed(0)}",
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              thickness: .6,
+                              height: 30,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Total Amout',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  widget.screenCheck ==
+                                          OrderSummaryScreenEnum
+                                              .normalOrderSummaryScreen
+                                      ? "₹${(cart.cartList!.totalPrice - cart.cartList!.totalDiscount).round()}"
+                                      : "₹${(order.cartModel[0].product.price - order.cartModel[0].product.discountPrice).round()}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(
+                              height: 20,
+                              thickness: .6,
+                            ),
+                            Text(
+                              widget.screenCheck ==
+                                      OrderSummaryScreenEnum
+                                          .normalOrderSummaryScreen
+                                  ? 'You will save ₹${cart.cartList!.totalDiscount.toStringAsFixed(0)} on this order'
+                                  : 'You will save ₹${order.cartModel[0].product.discountPrice.toStringAsFixed(0)} on this order',
+                              style: const TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
-                      ],
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.verified_user,
+                            size: 30,
+                            color: Colors.grey.shade600,
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            '''Safe and secure payment. Easy returns.
+           100% Authentic products.''',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                );
+        },
+      ),
+      bottomNavigationBar:
+          Consumer3<PaymentProvider, OrdersProvider, CartProvider>(
+        builder: (context, value, order, cart, child) {
+          return order.isLoading == true 
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Container(
+                  height: 70,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0),
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      widget.screenCheck ==
+                              OrderSummaryScreenEnum.normalOrderSummaryScreen
+                          ? "₹${cart.cartList!.totalPrice}"
+                          : "₹${order.cartModel[0].price}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.grey,
+                        decoration: TextDecoration.lineThrough,
+                      ),
                     ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-                itemCount: 1,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    paymentProvider.openCheckout(
-                        int.parse(
-                          ((provider.discountPrice)).toString(),
-                        ),
-                        context);
-                  },
-                  child: const Text('Continue'))
-            ]),
-          );
+                    subtitle: Text(
+                      widget.screenCheck ==
+                              OrderSummaryScreenEnum.normalOrderSummaryScreen
+                          ? "₹${(cart.cartList!.totalPrice - cart.cartList!.totalDiscount).round()}"
+                          : "₹${(order.cartModel[0].product.price - order.cartModel[0].product.discountPrice).round()}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        // color: Colors.grey,
+                      ),
+                    ),
+                    trailing: SizedBox(
+                      width: 200,
+                      child: Consumer<AddressProvider>(
+                        builder: (context, address, child) {
+                          return address.addressList.isEmpty
+                              ? OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.orange,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(CupertinoPageRoute(
+                                      builder: (context) {
+                                        return const AddressViewnAdd();
+                                      },
+                                    ));
+                                  },
+                                  child: const Text(
+                                    'Add address',
+                                  ),
+                                )
+                              : Consumer2<PaymentProvider, OrdersProvider>(
+                                  builder: (BuildContext context, vals, orders,
+                                      Widget? child) {
+                                    return ListView.builder(
+                                      itemCount: 1,
+                                      itemBuilder: (context, index) {
+                                        return ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.black,
+                                          ),
+                                          onPressed: () async {
+                                            log(cart.cartList!.totalPrice
+                                                .toString());
+                                            log(cart.cartList!.totalDiscount
+                                                .toString());
+                                            log(cart.cartitemsPayId.toString());
+                                            log(orders.productIds.toString());
+                                            log(address
+                                                .addressList[
+                                                    address.selectIndex]
+                                                .id);
+                                            paymentProvier.setTotalAmount(
+                                              widget.screenCheck ==
+                                                      OrderSummaryScreenEnum
+                                                          .normalOrderSummaryScreen
+                                                  ? int.parse((cart.cartList!
+                                                              .totalPrice -
+                                                          cart.cartList!
+                                                              .totalDiscount)
+                                                      .round()
+                                                      .toString())
+                                                  : int.parse((orders
+                                                              .cartModel[0]
+                                                              .price -
+                                                          orders.cartModel[0]
+                                                              .discountPrice)
+                                                      .round()
+                                                      .toString()),
+                                              widget.screenCheck ==
+                                                      OrderSummaryScreenEnum
+                                                          .normalOrderSummaryScreen
+                                                  ? cart.cartitemsPayId
+                                                  : orders.productIds,
+                                              address
+                                                  .addressList[
+                                                      address.selectIndex]
+                                                  .id,
+                                            );
+                                            // paymentProvider.openCheckout(
+                                            //   id: cart.cartList!.products[index].id,
+                                            //   name: cart.cartList!.products[index]
+                                            //       .product.name,
+                                            //   price: cart.cartList!.products[index]
+                                            //       .product.discountPrice,
+                                            //   offer: cart.cartList!.products[index]
+                                            //       .product.offer,
+                                            //   size: cart.cartList!.products[index]
+                                            //       .product.size,
+                                            //   img: cart.cartList!.products[index]
+                                            //       .product.image[index],
+                                            //   cat: cart.cartList!.products[index]
+                                            //       .product.category,
+                                            //   rate: cart.cartList!.products[index]
+                                            //       .product.rating,
+                                            //   desc: cart.cartList!.products[index]
+                                            //       .product.description,
+                                            //   int.parse(
+                                            //     ((order.cartModel[0].discountPrice))
+                                            //         .toString(),
+                                            //   ),
+                                            //   context,
+                                            // );
+                                          },
+                                          child: const Text(
+                                            'CONTINUE',
+                                            style: TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                        },
+                      ),
+                    ),
+                  ),
+                );
         },
       ),
     );
   }
 }
-// Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                               children: [
-//                                 ElevatedButton(
-//                                   style: ElevatedButton.styleFrom(
-//                                     fixedSize: const Size(300, 30),
-//                                   ),
-//                                   onPressed: () {
-//                                     Navigator.of(context).push(
-//                                       MaterialPageRoute(
-//                                         builder: (context) {
-//                                           return AdressForm(
-//                                             addressScreenCheck:
-//                                                 AddressScreen.editAddressScreen,
-//                                             addressId:
-//                                                 value.addressList[index].id,
-//                                           );
-//                                         },
-//                                       ),
-//                                     );
-//                                   },
-//                                   child: const Text(
-//                                     'Change Address',
-//                                     style: TextStyle(color: Colors.black),
-//                                   ),
-//                                 ),
-//                               ],
-//                             )

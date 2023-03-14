@@ -8,13 +8,17 @@ import 'package:finalproject/app/utils/dio_exceptions.dart';
 import 'package:finalproject/app/utils/dio_interceptor.dart';
 
 class OrderService {
-  Future<String?> placeOrder(OrdersModel model, context) async {
+  Future<String?> placeOrder(OrdersModel model) async {
     try {
-      final Dio dios = await ApiInterceptor().getApiUser(context);
+      final Dio dios = await ApiInterceptor().getApiUser();
       final Response response =
           await dios.post(ApiBaseUrl().baseUrl + ApiEndPoints.orders, data: {
-        model.toJson(),
+        "addressId": model.addressId,
+        "paymentType": model.paymentType,
+        "products": List<dynamic>.from(model.products.map((x) => x.toJson())),
+        // model.toJson(),
       });
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.data == null) {
           return null;
@@ -28,14 +32,15 @@ class OrderService {
         return null;
       }
     } on DioError catch (e) {
+      log('happenss');
       log(e.message.toString());
-      DioException().dioError(e, context);
+      DioException().dioError(e);
     }
     return null;
   }
 
-  Future<List<GetOrderModel>?> getAllOrders(context) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+  Future<List<GetOrderModel>?> getAllOrders() async {
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.get(
         ApiBaseUrl().baseUrl + ApiEndPoints.orders,
@@ -54,13 +59,13 @@ class OrderService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e);
     }
     return null;
   }
 
-  Future<GetOrderModel?> getSingleOrders(context, String orderId) async {
-    Dio dios = await ApiInterceptor().getApiUser(context);
+  Future<GetOrderModel?> getSingleOrders( String orderId) async {
+    Dio dios = await ApiInterceptor().getApiUser();
     try {
       final Response response = await dios.get(
         "${ApiBaseUrl().baseUrl + ApiEndPoints.orders}/$orderId",
@@ -77,14 +82,14 @@ class OrderService {
       }
     } on DioError catch (e) {
       log(e.message);
-      DioException().dioError(e, context);
+      DioException().dioError(e);
     }
     return null;
   }
 
-  Future<String?> cancelOrder(orderId, context) async {
+  Future<String?> cancelOrder(orderId) async {
     try {
-      final Dio dios = await ApiInterceptor().getApiUser(context);
+      final Dio dios = await ApiInterceptor().getApiUser();
       final Response response = await dios.patch(
         "${ApiBaseUrl().baseUrl + ApiEndPoints.orders}/$orderId",
       );
@@ -101,7 +106,9 @@ class OrderService {
       }
     } on DioError catch (e) {
       log(e.message.toString());
-      DioException().dioError(e, context);
+      DioException().dioError(
+        e,
+      );
     }
     return null;
   }

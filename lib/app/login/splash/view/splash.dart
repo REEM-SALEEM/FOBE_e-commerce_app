@@ -1,5 +1,6 @@
 import 'package:finalproject/app/login/splash/provider/splash_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class ScreenSplash extends StatefulWidget {
@@ -18,11 +19,32 @@ class _ScreenSplashState extends State<ScreenSplash> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        body: Center(
-      child: Text('FOBE',
-          style: TextStyle(
-              fontFamily: 'Comfortaa', color: Colors.red, fontSize: 28)),
-    ));
+    return  Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TweenAnimationBuilder(
+              curve: Curves.bounceOut,
+              builder: (context, value, child) {
+                return Image(
+                  height: value,
+                  image: const AssetImage(
+                    'assets/fobehome.png',
+                  ),
+                );
+              },
+              duration: const Duration(seconds: 3),
+              tween: Tween<double>(begin: 20, end: 100),
+            ),
+            LoadingAnimationWidget.prograssiveDots(
+              color: Colors.orange,
+              size: 50,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
